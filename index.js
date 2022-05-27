@@ -1,6 +1,7 @@
 const express = require('express')
 const app = express()
 const database = require('./MongoRepository')
+const {ObjectId} = require("mongodb");
 var db;
 app.use((req, res, next) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
@@ -11,9 +12,11 @@ app.use((req, res, next) => {
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
+
 //Connexion à la bdd
 database.connect().then(datab=>{
     db = datab;
+
 })
 
 //Routes
@@ -44,12 +47,13 @@ app.post('/login',function(req,res,next){
         let pangolin=req.body
         database.login(db,pangolin,(result)=>{
             if(result){
-                console.log(result)
+
                 res.status(200)
-                res.json({statut:200,message:'ok',data:result})
+                res.json({statut:200,data:result})
                 next()
             }
             else{
+
                 res.status(400).json({error:'ko'})
                 next()
             }
@@ -58,13 +62,13 @@ app.post('/login',function(req,res,next){
         next(err)
     }
 })
-app.get('/Pangolin/:id',function(req,res){
+app.get('/Pangolin/:id',function(req,res,next){
     try{
         console.log(req.params.id)
-        database.findInfos(db,ObjectId(""+req.params.id+""),(data)=>{
+        database.find(db,ObjectId(""+req.params.id+""),(data)=>{
             res.status(200)
             res.json(data)
-            next(err)
+            next()
         })
     }catch(err){
         next(err)
@@ -72,7 +76,7 @@ app.get('/Pangolin/:id',function(req,res){
 
 })
 app.put('/update/:id',function(req,res){
-    database.updateInfos(db,ObjectId(""+req.params.id+""),req.body,(data)=>{
+    database.updateRole(db,ObjectId(""+req.params.id+""),req.body,(data)=>{
         res.status(200)
         res.json(data)
     })
@@ -92,10 +96,11 @@ app.put('/addFriend/:id',function(req,res){
 
 
 app.get('/allFriends',(req,res) =>{
-    database.findAllFriends(db,(data)=>{
+    database.findAll(db,(data)=>{
         res.status(200)
         res.json(data)
     })
+
 })
 
 
