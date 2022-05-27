@@ -25,11 +25,11 @@ exports.register=(db,pangolin,callback)=>{
     }).then((res)=>callback(res))
 
 }
-exports.login=(db,id,callback)=>{
+exports.login=(db,pangolin,callback)=>{
 
     db.collection('pangolin').findOne({
-        username:id.username,
-        password:id.password,
+        username:pangolin.username,
+        password:pangolin.password,
     }).then((res)=>callback(res))
 
 }
@@ -48,21 +48,24 @@ exports.updateRole=(db,id,pangolin,callback)=>{
 exports.addFriend=(db,idPangolin,idFriend,callback)=>{
     db.collection('pangolin').updateOne({
         _id:idPangolin},{$addToSet:{
-            friend:idFriend
+            amis:idFriend
         }}
     ).then((res)=>callback(res))
 }
-exports.findAllFriends=(db,callback)=>{
+exports.findAll=(db,callback)=>{
 
-    console.log( db.collection('pangolin').find({}).toArray((err,docs)=>{
+     db.collection('pangolin').find({ }).toArray((err,docs)=>{
             callback(docs)
         })
-    )
+
 }
 exports.deleteFriend=(db,idPangolin,idFriend,callback)=>{
     db.collection('pangolin').updateOne({
         _id:idPangolin},{$pull:{
-            friend:idFriend
+            amis:idFriend
         }}
+
+
+
     ).then((res)=>callback(res))
 }
